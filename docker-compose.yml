@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    container_name: app_example
+    build: .
+    command: uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000
+    volumes:
+      - ./app:/usr/src/application/app
+    ports:
+      - "8000:8000"
+    environment:
+      ENVIRONMENT: "${ENVIRONMENT}"
+      TESTING: "${TESTING}"
+      TRITON_URL: "${TRITON_URL}"
+      TORCH_MODEL_NAME: "${TORCH_MODEL_NAME}"
+      TORCH_MODEL_VERSION: "${TORCH_MODEL_VERSION}"
+      XGBOOST_MODEL_NAME: "${XGBOOST_MODEL_NAME}"
+      XGBOOST_MODEL_VERSION: "${XGBOOST_MODEL_VERSION}"
+      SKLEARN_MODEL_NAME: "${SKLEARN_MODEL_NAME}"
+      SKLEARN_MODEL_VERSION: "${SKLEARN_MODEL_VERSION}"
+    depends_on:
+      - triton
+
+  triton:
+    container_name: tritonserver
+    image: triton_fil
+    command: tritonserver --model-repository=/models
+    ports:
+      - "8001:8001"
+      - "8002:8002"
+    volumes:
+      - /media/alexander/D/PycharmProjects/ITMO/prod_example/models:/models
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]

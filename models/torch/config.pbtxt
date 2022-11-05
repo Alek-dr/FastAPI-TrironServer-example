@@ -1,0 +1,20 @@
+name: "torch"
+platform: "pytorch_libtorch"
+max_batch_size: 32
+input [
+  {
+    name: "x"
+    data_type: TYPE_FP32
+    dims: [2]
+  }
+]
+output [
+  {
+    name: "12"
+    data_type: TYPE_FP32
+    dims: [1]
+  }
+]
+dynamic_batching {
+    preferred_batch_size: [ 8 ]
+}
