@@ -58,11 +58,11 @@ class ModelGRPCClient:
         ]
         inputs[0].set_data_from_numpy(data)
         outputs = [self.grpcclient.InferRequestedOutput(self.output_name)]
-        detector_res = self.triton_client.infer(
+        model_res = self.triton_client.infer(
             self.model_name,
             inputs,
             model_version=self.model_version,
             outputs=outputs,
         )
-        output_array = detector_res.as_numpy(self.output_name)
+        output_array = model_res.as_numpy(self.output_name)
         return output_array
